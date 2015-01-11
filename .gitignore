@@ -28,7 +28,6 @@
 *.app
 
 # fichros sueltos
-*.txt
 *.odt
 *.pdf
 *.html
