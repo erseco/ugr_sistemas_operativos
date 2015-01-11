@@ -8,5 +8,7 @@ Se compone de:
 * Modulo 1
 * Modulo 2
 
+NOTA: Las autoevaluaciones se han convertido de ODT a TXT usando el programa odt2txt (ver Makefile)
+
 ---
 Si quieres contactar conmigo: http://www.ernesto.es
