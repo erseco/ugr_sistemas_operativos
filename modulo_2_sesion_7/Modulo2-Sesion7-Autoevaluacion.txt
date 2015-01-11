@@ -1,0 +1,396 @@
+
+[-- Image: graphics1 --]Sistemas Operativos
+
+Formulario de auto-evaluación
+
+Modulo 2. Sesión 7. Construcción de un spool de impresión
+
+Nombre y apellidos:
+
+Ernesto Serrano Collado
+
+a) Cuestionario de actitud frente al trabajo.
+
+El tiempo que he dedicado a la preparación de la sesión antes de
+asistir al laboratorio ha sido de 20 minutos.
+
+1. He resuelto todas las dudas que tenía antes de iniciar la
+sesión de prácticas: si (si/no). En caso de haber contestado
+“no”, indica los motivos por los que no las has resuelto:
+
+2. Tengo que trabajar algo más los conceptos sobre:
+
+3. Comentarios y sugerencias:
+
+b) Cuestionario de conocimientos adquiridos.
+
+El código de mi programa servidor.c ha sido:
+
+/*
+
+ * Sistemas Operativos
+
+ * Grado en Ingeniería Informática
+
+ *
+
+ * 2014 © Copyleft - All Wrongs Reserved
+
+ *
+
+ * Ernesto Serrano <erseco@correo.ugr.es>
+
+ *
+
+ * servidor.c
+
+ *
+
+ */
+
+#include <stdio.h>
+
+#include <stdlib.h>
+
+#include <string.h>
+
+#include <sys/types.h>
+
+#include <sys/stat.h>
+
+#include <fcntl.h>
+
+#include <unistd.h>
+
+#include <signal.h>
+
+//Constantes
+
+#define longnombre 50
+
+//Manejador de senal
+
+void mimanejador(int senial){
+
+int estado;
+
+wait(&estado);
+
+}
+
+//Punto de entrada al programa
+
+int main(int argc, char* argv[]){
+
+//Declaracion de variables
+
+int fdfifo_e, fdfifo_s, fdfifo_proxy;
+
+char peticion[10];
+
+char nombrefifo_proxy[longnombre];
+
+char nombrefifo_e[longnombre], nombrefifo_s[longnombre];
+
+size_t bytesleidos;
+
+pid_t pid;
+
+if(argc!=2){
+
+printf("Modo de uso: %s <nombrefifo>\n", argv[0]);
+
+exit(EXIT_FAILURE);
+
+}
+
+//Pone el manejador para la senal SIGHLD.
+
+signal(SIGCHLD, mimanejador);
+
+umask(0);
+
+//Creamos el archivo de bloqueo
+
+if( creat("bloqueo", S_IRWXU) < 0){
+
+perror("Error al crear el archivo de bloqueo\n");
+
+exit(EXIT_FAILURE);
+
+}
+
+//Generar los nombres de los archivos fifo de entrada y de
+salida
+
+sprintf(nombrefifo_e, "%se", argv[1]);
+
+sprintf(nombrefifo_s, "%ss", argv[1]);
+
+//Borramos los archivos de los cauces (si existieran
+previamente)
+
+unlink(nombrefifo_e);
+
+unlink(nombrefifo_s);
+
+//Crear los cauces de entrada y de salida
+
+if (mkfifo(nombrefifo_e, S_IRWXU) < 0){
+
+perror("Error al crear el cauce de entrada\n");
+
+exit(EXIT_FAILURE);
+
+}
+
+if (mkfifo(nombrefifo_s, S_IRWXU) < 0){
+
+perror("Error al crear el cauce de salida\n");
+
+exit(EXIT_FAILURE);
+
+}
+
+// abrir los cauces de entrada y de salida
+
+if ((fdfifo_e = open(nombrefifo_e,O_RDWR)) < 0){
+
+perror("Error al abrir el fifo de entrada\n");
+
+exit(EXIT_FAILURE);
+
+}
+
+if ((fdfifo_s = open(nombrefifo_s,O_RDWR)) < 0){
+
+perror("Error al abrir el fifo de salida\n");
+
+exit(EXIT_FAILURE);
+
+}
+
+while(1) {
+
+bytesleidos = read(fdfifo_e, &peticion, 10);
+
+printf("Peticion recibida\n");
+
+if((pid=fork()) < 0 ) {
+
+perror("Error en el fork\n");
+
+exit(EXIT_FAILURE);
+
+} else if(pid == 0) {
+
+//El hijo que sera el proxy
+
+pid = getpid();
+
+sprintf (nombrefifo_proxy, "fifo.%d", pid);
+
+//El hijo crea el fifo para comunicarse con el cliente
+
+if(mkfifo(nombrefifo_proxy, S_IRWXU) < 0){
+
+perror("Error en mkfifo al crear el cauce de entrada\n");
+
+exit(EXIT_FAILURE);
+
+}
+
+//Se envia el pid del proxy al cliente
+
+printf("Enviando el pid del proxy %d al cliene\n", pid);
+
+if(write(fdfifo_s, &pid, sizeof(pid)) != sizeof(pid)) {
+
+perror("Error al escribir el pid del proxy en el fifo de
+salida\n");
+
+exit(EXIT_FAILURE);
+
+}
+
+//Abre el fifo en modo solo lectura para recibir datos del
+cliente
+
+if ((fdfifo_proxy = open(nombrefifo_proxy, O_RDONLY)) < 0) {
+
+perror("Error al abrir el archivo fifo del proxy\n");
+
+exit(EXIT_FAILURE);
+
+}
+
+//Redireccionamos la entrada estándar al fifo del proxy
+
+dup2(fdfifo_proxy, STDIN_FILENO);
+
+//Ejecutamos el proxy que lee de la entrada estandar y almacena
+los datos en los archivo temporal,
+
+//lee del archivo temporal e imprime en pantalla, al final
+libera el cerrojo de pantalla
+
+execlp("./proxy", "proxy", NULL);
+
+//Si no pasa al codigo del proxy es que ha dado error, asi que
+lo pintamos
+
+perror("Error al ejecutar el proxy");
+
+exit(EXIT_FAILURE);
+
+}
+
+}
+
+exit(EXIT_SUCCESS);
+
+}
+
+El código de mi programa proxy.c ha sido:
+
+/*
+
+ * Sistemas Operativos
+
+ * Grado en Ingeniería Informática
+
+ *
+
+ * 2014 © Copyleft - All Wrongs Reserved
+
+ *
+
+ * Ernesto Serrano <erseco@correo.ugr.es>
+
+ *
+
+ * proxy.c
+
+ *
+
+ */
+
+#include <stdio.h>
+
+#include <stdlib.h>
+
+#include <unistd.h>
+
+#include <fcntl.h>
+
+//Constantes
+
+#define tamano 1024
+
+void bloqueodesbloqueo(int dbloqueo, int orden) {
+
+struct flock cerrojo;
+
+//Inicializamos el cerrojo para bloquear todo el archivo
+
+cerrojo.l_type= orden;
+
+cerrojo.l_whence= SEEK_SET;
+
+cerrojo.l_start= 0;
+
+cerrojo.l_len = 0;
+
+//Si vamos a bloquearlo y ya lo esta, entonces el proceso duerme
+
+if (fcntl(dbloqueo, F_SETLKW, &cerrojo) == -1) {
+
+perror ("Proxy: problemas al bloquear para impresion");
+
+exit(EXIT_FAILURE);
+
+}
+
+}
+
+//Punto de entrada al programa
+
+int main(int argc, char* argv[]){
+
+//Declaracion de variables
+
+char bufer[tamano];
+
+FILE* fdtmp;
+
+size_t bytesleidos;
+
+char nombrefifo[50];
+
+int fdbloqueo;
+
+if ((fdbloqueo = open("bloqueo", O_RDWR)) < 0){
+
+perror("Error al abrir el archivo de bloqueo\n");
+
+exit(EXIT_FAILURE);
+
+}
+
+//Creacion del archivo temporal
+
+if ((fdtmp = tmpfile()) == NULL){
+
+perror("Error en tmpfile: ");
+
+exit(EXIT_FAILURE);
+
+}
+
+//Leer desde la entrada estandar y almacenar los datos leidos en
+el archivo temporal antes creado
+
+while ((bytesleidos=read(STDIN_FILENO, &bufer, tamano)) > 0){
+
+if(fwrite(&bufer, 1, bytesleidos, fdtmp) != bytesleidos){
+
+perror("Error en fwrite\n");
+
+exit(EXIT_FAILURE);
+
+}
+
+}
+
+//Volvemos al inicio del descriptor del archivo
+
+rewind(fdtmp);
+
+//Obtener cerrojo para imprimir en pantalla
+
+bloqueodesbloqueo(fdbloqueo, F_WRLCK);
+
+while((bytesleidos = fread(&bufer, 1, tamano,fdtmp)) > 0){
+
+printf("%s", bufer);
+
+}
+
+//Desbloqueamos
+
+bloqueodesbloqueo(fdbloqueo, F_UNLCK);
+
+fclose(fdtmp);
+
+//La eliminacion del archivo temporal es automatica
+
+//Eliminamos el archivo fifo antes creado
+
+sprintf(nombrefifo, "fifo.%d", getpid());
+
+unlink(nombrefifo);
+
+exit(EXIT_SUCCESS);
+
+}
+
