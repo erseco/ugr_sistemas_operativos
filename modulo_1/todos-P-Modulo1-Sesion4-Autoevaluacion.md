@@ -1,0 +1,127 @@
+![](Pictures/100002010000041A00000042C7CB0DFF.png)
+
+Sistemas Operativos
+
+Formulario de auto-evaluación
+
+Sesión 4. Automatización de tareas
+
+\
+
+Nombre y apellidos:
+
+Ernesto Serrano Collado
+
+\
+
+​a) Cuestionario de actitud frente al trabajo.
+
+El tiempo que he dedicado a la preparación de la sesión antes de asistir
+al laboratorio ha sido de 60 minutos.
+
+​1. He resuelto todas las dudas que tenía antes de iniciar la sesión de
+prácticas: SI (si/no). En caso de haber contestado “no”, indica los
+motivos por los que no las has resuelto:
+
+\
+
+\
+
+\
+
+\
+
+\
+
+​2. Tengo que trabajar algo más los conceptos sobre:
+
+\
+
+\
+
+\
+
+\
+
+\
+
+​3. Comentarios y sugerencias:
+
+Los ejercicios los he realizado en una máquina virtual con Debian 7.1
+Wheezy, pero con UserMode Linux sería tan facil como bajar el paquete
+rpm de at, instalarlo e iniciar el servicio invocando a service atd o
+desde de /etc/init.d/atd
+
+\
+
+\
+
+\
+
+\
+
+​b) Cuestionario de conocimientos adquiridos.
+
+Mi solución a la actividad 3.1 ha sido:
+
+Ejecuto: ps -aux
+
+USER PID %CPU %MEM VSZ RSS TTY STAT START TIME COMMAND
+
+root 1 0.1 0.0 10644 136 ? Ss 14:07 0:01 init [2]
+
+daemon 2691 0.0 0.0 16668 0 ? Ss 14:07 0:00 /usr/sbin/atd
+
+root 2869 0.0 0.1 20404 280 ? Ss 14:07 0:00 /usr/sbin/cron
+
+\
+
+Mi solución a la actividad 4.3 ha sido:
+
+at now + 1 min
+
+luego he introducido pwd \> /home/ernesto/archivo1.txt
+
+y finalmente Ctrl+D para salir
+
+Se ha creado el archivo, que se situa en el directorio desde el que fue
+invocado at, ya que me encontraba en la carpeta Escritorio de mi home,
+el valor de umask es 0022
+
+\
+
+Mi solución a la actividad 4.5 ha sido:
+
+He creado un script con el siguiente contenido:
+
+\#!/bin/sh
+
+nombrearchivo="/home/ernesto/modificados-"\`date +%Y-%j-%T\`
+
+find /home/ernesto/ -mtime 0 \> \$nombrearchivo
+
+Luego le he hecho un chmod +x al script y le he dicho que lo ejecute
+dentro de un día con la sintaxis: at now + 1 day
+
+\
+
+En la actividad 5.3 el contenido de mi script reducelista ha sido:
+
+Mi script es el siguiente:
+
+\#!/bin/bash\
+head /tmp/listacores \> /tmp/listacores.tmp\
+mv /tmp/listacores.tmp /tmp/listacores
+
+Está en dos pasos porque el shell no permite sobreescribir el archivo de
+entrada, hay que hacerlo en dos pasos
+
+\
+
+En la actividad 5.5 el contenido de mi archivo crontab llamado
+crontab-reducelista ha sido:
+
+PATH=./:/home/ernesto\
+1 \* \* \* \* ernesto /home/ernesto/reducelista
+
+\

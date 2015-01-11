@@ -1,0 +1,132 @@
+Sistemas Operativos
+
+Formulario de auto-evaluación
+
+Sesión 1. Herramientas de administración básicas
+
+\
+
+Nombre y apellidos:
+
+Ernesto Serrano Collado
+
+\
+
+​a) Cuestionario de actitud frente al trabajo.
+
+El tiempo que he decicado a la preparación de la sesión antes de asistir
+al laboratorio ha sido de 60 minutos.
+
+​1. He resuelto todas las dudas que tenía antes de iniciar la sesión de
+prácticas: SI (si/no). En caso de haber contestado “no”, indica los
+motivos por los que no las has resuelto:
+
+\
+
+\
+
+\
+
+\
+
+\
+
+​2. Tengo que trabajar algo más los conceptos sobre:
+
+el csh (C Shell) que es el que ejecuta por defecto Ubuntu 10.04 en los
+ordenadores del laboratorio
+
+\
+
+\
+
+​3. Comentarios y sugerencias:
+
+Se podría mejorar el script comprobando si ya existen los archivos para
+no sobreescribirlos
+
+\
+
+\
+
+\
+
+​b) Cuestionario de conocimientos adquiridos.
+
+Mi solución a la actividad 3.1 ha sido:
+
+\#!/bin/bash
+
+\#Creamos un directorio en /tmp donde almacenar User-Mode Linux\
+mkdir /tmp/UML
+
+\#Copiamos los archivos del servidor al directorio temporal\
+cp /fenix/depar/lsi/UML/\*.gz /tmp/UML
+
+\#Extraemos los archivos mediante la herramienta gunzip\
+gunzip /tmp/UML/\*.gz
+
+\#Cambiamos al directorio /tmp/UML\
+cd /tmp/UML
+
+\#Ejecutamos User-Mode Linux\
+./kernel32-3.0.4 ubda=./Fedora14-x86-root\_fs mem=1024m
+
+\
+
+Mi solución a la actividad 4.2 ha sido:
+
+adduser pepe\
+adduser juan -p 1234\
+adduser joselito -s /bin/csh
+
+cat /etc/shadows\
+cat /etc/group\
+ls -a /home/pepe
+
+userdel pepe\
+ls /home\
+\#Despues de borrar el usuario sigue existiendo su carpeta en /home
+
+\
+
+Mi solución a la actividad 4.5 ha sido:
+
+groupadd grupo1\
+groupadd grupo2\
+\
+gpasswd -a pepe grupo1\
+gpasswd -a joselito grupo2\
+\
+Al ejecutar vemos que roto tiene el id 0, además vemos los grupos a los
+que pertenece root
+
+\
+
+Mi solución a la actividad 5.2 ha sido:
+
+En su carpeta de usuario, que está localizada en /root
+
+\
+
+\
+
+Mi solución a la actividad 5.4 ha sido:
+
+El archivo /etc/fstab contiene la información de los puntos de montaje,
+en este caso hay 6 puntos de montaje, aunque solo hay uno "físico" que
+es / los demás son todos temporales para /dev/pts para /tmp, para /proc,
+etc… las opciones que usa son las comunes, el auto para / que detecta
+automáticamente el sistema de archivos, pero se podría especificar, /
+tiene el atributo noatime que haee que el sistema de archivos no escriba
+la hora del ultimo acceso a un archivo, esto mejora el rendimiento en
+discos SSD y está indicado para discos virtuales, como es el caso de
+User-Mode Linux
+
+\
+
+\
+
+\
+
+\

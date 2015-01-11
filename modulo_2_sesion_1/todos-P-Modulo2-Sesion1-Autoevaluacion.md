@@ -1,0 +1,277 @@
+![](Pictures/100002010000041A00000042C7CB0DFF.png)
+
+Sistemas Operativos
+
+Formulario de auto-evaluación
+
+Modulo 2. Sesión 1. Llamadas al sistema para el S.Archivos. Parte I
+
+\
+
+Nombre y apellidos:
+
+Ernesto Serrano Collado
+
+\
+
+​a) Cuestionario de actitud frente al trabajo.
+
+El tiempo que he dedicado a la preparación de la sesión antes de asistir
+al laboratorio ha sido de …... minutos.
+
+​1. He resuelto todas las dudas que tenía antes de iniciar la sesión de
+prácticas: …... (si/no). En caso de haber contestado “no”, indica los
+motivos por los que no las has resuelto:
+
+\
+
+\
+
+\
+
+\
+
+\
+
+​2. Tengo que trabajar algo más los conceptos sobre:
+
+\
+
+\
+
+\
+
+\
+
+\
+
+​3. Comentarios y sugerencias:
+
+\
+
+\
+
+\
+
+​b) Cuestionario de conocimientos adquiridos.
+
+Mi solución al ejercicio 1 ha sido:
+
+El programa del ejercicio 1 crea un archivo llamado “archivo” que
+contiene la cadena “abcdefghij” seguida de 40 caracteres nulos y la
+cadena “ABCDEFGHIJ”
+
+El comando cat archivo saca el contenido de archivo por la salida
+estándar ignorando los caracteres nulos
+
+El comando od -c archivo saca el contenido de archivo por la salida
+estándar mostrando sus códigos ascii y los caracteres nulos
+
+\
+
+Mi solución a la ejercicio 2 ha sido:
+
+/\*
+
+ \* Sistemas Operativos
+
+ \* Grado en Ingeniería Informática
+
+ \*
+
+ \* 2013 © Copyleft - All Wrongs Reserved
+
+ \*
+
+ \* Ernesto Serrano \<erseco@correo.ugr.es\>
+
+ \*/
+
+\#include\<stdlib.h\>
+
+\#include\<sys/types.h\>
+
+\#include\<sys/stat.h\>
+
+\#include\<fcntl.h\>
+
+\#include\<stdio.h\>
+
+\#include\<errno.h\>
+
+\#include\<unistd.h\> //Esto es para que no de warnings en Mac
+
+\#include\<string.h\>
+
+\
+
+int main(int argc, char \*argv[])
+
+{
+
+\
+
+//Declaracion de variables
+
+int fd1, fd2;
+
+char buffer[80];
+
+int numbytes;
+
+int i = 1;
+
+\
+
+//Comprobamos si se le ha pasado un pathname como parámetro
+
+if(argc\<2) {
+
+\
+
+//como no se le ha pasado ningun fichero se lee la entrada estandar
+
+fd1 = STDIN\_FILENO;
+
+\
+
+}else {
+
+//abrimos el archivo de lectura
+
+if ((fd1 = open(argv[1], O\_RDONLY))\<0) {
+
+printf("\\nError %d en open",errno);
+
+perror("\\nError en open");
+
+exit(-1);
+
+}
+
+}
+
+\
+
+//Abrimos el archivo de escritura
+
+if( (fd2=open("salida.txt",O\_CREAT|O\_WRONLY,S\_IRUSR|S\_IWUSR))\<0) {
+
+printf("\\nError %d en open",errno);
+
+perror("\\nError en open");
+
+exit(-1);
+
+}
+
+//Le metemos caracteres nulos al principio para meter luego una frase
+
+write(fd2, &buffer, 27);
+
+//Escribimos un salto de linea
+
+write(fd2, "\\n", 1);
+
+//Recorremos el archivo de lectura leyendo en tramos de 80 bytes
+
+while ((numbytes = read(fd1, &buffer, 80)) \> 0) {
+
+char numerobloque[8];
+
+sprintf(numerobloque, "Bloque %i", i);
+
+//Escribimos la cadena Bloque
+
+write(fd2, &numerobloque, sizeof(numerobloque));
+
+//Escribimos un salto de linea
+
+write(fd2, "\\n", 1);
+
+//Escribimos los 80 bytes
+
+write(fd2, &buffer, numbytes);
+
+//Escribimos un salto de linea
+
+write(fd2, "\\n", 1);
+
+//Incrementamos el iterador
+
+i++;
+
+}
+
+//Nos vamos a la primera linea para introducir ahi el texto
+
+if(lseek(fd2,0,SEEK\_SET) \< 0) {
+
+perror("\\nError en lseek");
+
+exit(-1);
+
+}
+
+//Escribimos el total de bloques (es el iterador menos 1)
+
+char totalbloques[27];
+
+sprintf(totalbloques, "El número de bloques es %i", i-1);
+
+//Escribimos la cadena Bloque
+
+write(fd2, &totalbloques, sizeof(totalbloques));
+
+\
+
+//Cerramos los archivos
+
+close(fd2);
+
+close(fd1);
+
+return 0;
+
+}
+
+\
+
+Mi solución a la ejercicio 3 ha sido:
+
+Ese programa acepta una lista de archivos, los va recorriendo y nos dice
+el tipo de archivo que es cada uno mediante un lstat
+
+\
+
+Mi solución a la ejercicio 4 ha sido:
+
+Pues tendría que definir la macro en el código como está definida
+S\_ISREG(mode)
+
+\
+
+\#define
+[S\_ISREG2](http://lxr.linux.no/linux+v3.11.6/+code=S_ISREG)([mode](http://lxr.linux.no/linux+v3.11.6/+code=m))
+((([mode](http://lxr.linux.no/linux+v3.11.6/+code=m)) &
+[S\_IFMT](http://lxr.linux.no/linux+v3.11.6/+code=S_IFMT)) ==
+[S\_IFREG](http://lxr.linux.no/linux+v3.11.6/+code=S_IFREG))
+
+\
+
+aunque también le podría dar los valores directamente
+
+\#define
+[S\_ISREG2](http://lxr.linux.no/linux+v3.11.6/+code=S_ISREG)([mode](http://lxr.linux.no/linux+v3.11.6/+code=m))
+((([mode](http://lxr.linux.no/linux+v3.11.6/+code=m))
+&[00170000](http://lxr.linux.no/linux+v3.11.6/+code=S_IFMT)) ==
+[0100000](http://lxr.linux.no/linux+v3.11.6/+code=S_IFREG))
+
+\
+
+Luego podria llamarla igual que llamo a S\_ISREG
+
+Lo que hará la macro es que el compilador reemplazará S\_ISREG2 por lo
+definido a la derecha
+
+\

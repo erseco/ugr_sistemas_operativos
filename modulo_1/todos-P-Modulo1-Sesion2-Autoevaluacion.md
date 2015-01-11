@@ -1,0 +1,132 @@
+Sistemas Operativos
+
+Formulario de auto-evaluación
+
+Sesión 2. Herramientas de administración de sistemas de archivos
+
+\
+
+Nombre y apellidos:
+
+Ernesto Serrano Collado
+
+\
+
+​a) Cuestionario de actitud frente al trabajo.
+
+El tiempo que he decicado a la preparación de la sesión antes de asistir
+al laboratorio ha sido de 20 minutos.
+
+​1. He resuelto todas las dudas que tenía antes de iniciar la sesión de
+prácticas: SI (si/no). En caso de haber contestado “no”, indica los
+motivos por los que no las has resuelto:
+
+\
+
+\
+
+\
+
+\
+
+​2. Tengo que trabajar algo más los conceptos sobre:
+
+\
+
+\
+
+\
+
+\
+
+\
+
+​3. Comentarios y sugerencias:
+
+\
+
+\
+
+\
+
+\
+
+\
+
+​b) Cuestionario de conocimientos adquiridos.
+
+Mi solución a la actividad 4.1 ha sido:
+
+mke2fs -L LABEL\_ext3 -t ext3 /dev/loop0
+
+mke2fs -L LABEL\_ext4 -t ext4 /dev/loop1
+
+\
+
+\
+
+Mi solución a la actividad 5.1 ha sido:
+
+tune2fs -u username -C0 /dev/loop0
+
+\
+
+\
+
+\
+
+\
+
+Mi solución a la actividad 7.2 ha sido:
+
+mkdir /mnt/paquetes\
+mount none /mnt/paquetes -t hostfs -o /fenix/depar/lsi/so/paquetes
+
+cd /mnt/paquetes\
+rpm -i tcp\_wrappers(…).rpm\
+rpm -i liblnl(…).rpm\
+rpm -i quota(…).rpm\
+\
+editamos el archivo /etc/fstab y le agregamos al punto de montaje del
+dispositvo loop la palabra usrquota
+
+montamos los sistemas de archivos\
+mount -a\
+quotacheck -nm /mnt/ext3\
+quotaon -a\
+edquota pepe\
+
+Editamos las columnas necesarias y salimos con :wq!
+
+\
+
+\
+
+Mi solución a la actividad 8.2 ha sido:
+
+No se puede realizar la actividad, ya que no se pueden obtener los
+paquetes de yum para fedora 14 que es la que usa User-Mode Linux, se
+podría intentar en casa con redhat
+
+\
+
+\
+
+\
+
+Mi solución a la actividad 8.3 ha sido:
+
+1---\
+rpm -q -i -l quota\
+2----\
+rpm -q -i -c quota\
+3---\
+rpm -q -i -R quota\
+4----\
+rpm -i -vv sysstat(…).rpm\
+5-----\
+rpm -e -vv systat\
+6-----\
+rpm -u -vv libc(…).rpm
+
+\
