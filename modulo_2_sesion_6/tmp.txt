@@ -1,0 +1,12 @@
+#include <fcntl.h>
+#include <signal.h>
+#include <stdbool.h>	//Cabeceras para poder usar el tipo booleano
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+/*  
+//Vector donde almacenar el contador de señales
+const static int SIGNAL_SIZE = 10;
+int main(int argc, char *argv[]) {
+static int received_signals[SIGNAL_SIZE];

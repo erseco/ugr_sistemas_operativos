@@ -1,0 +1,195 @@
+
+[-- Image: graphics1 --]Sistemas Operativos
+
+Formulario de auto-evaluación
+
+Modulo 2. Sesión 5. Llamadas al sistema para gestión y control
+de señales.
+
+Nombre y apellidos:
+
+Ernesto Serrano Collado
+
+a) Cuestionario de actitud frente al trabajo.
+
+El tiempo que he dedicado a la preparación de la sesión antes de
+asistir al laboratorio ha sido de 60 minutos.
+
+1. He resuelto todas las dudas que tenía antes de iniciar la
+sesión de prácticas:si (si/no). En caso de haber contestado
+“no”, indica los motivos por los que no las has resuelto:
+
+2. Tengo que trabajar algo más los conceptos sobre:
+
+3. Comentarios y sugerencias:
+
+b) Cuestionario de conocimientos adquiridos.
+
+Mi solución al ejercicio 2 ha sido:
+
+/*
+
+* Sistemas Operativos
+
+* Grado en Ingeniería Informática
+
+*
+
+* 2013 © Copyleft - All Wrongs Reserved
+
+*
+
+* Ernesto Serrano <erseco@correo.ugr.es>
+
+*
+
+*  Escribe un programa en C llamado contador, tal que cada vez
+que reciba una
+
+*  señal que se pueda manejar, muestre por pantalla la señal y
+el número de
+
+*  veces que se ha recibido ese tipo de señal, y un mensaje
+inicial indicando
+
+*  las señales que no puede manejar.
+
+*/
+
+#include <stdio.h>
+
+#include <signal.h>
+
+#include <unistd.h>
+
+#include <stdlib.h>
+
+#include <stdbool.h>  //Cabeceras para poder usar el tipo
+booleano
+
+//Vector donde almacenar el contador de señales
+
+const static int SIGNAL_SIZE = 10;
+
+static int received_signals[SIGNAL_SIZE];
+
+static void sig_handler (int signum) {
+
+if (signum >= 1 && signum <= SIGNAL_SIZE) {
+
+//Incrementamos el elemento del vector de señales recibidas
+
+received_signals[signum]++;
+
+printf("La señal %d se ha recibido %d veces\n", signum,
+received_signals[signum]);
+
+} else {
+
+printf("No puedo manejar la señal %d\n", signum);
+
+}
+
+}
+
+int main(int argc, char *argv[]) {
+
+//Declaración de variables
+
+struct sigaction sig_action;
+
+//Asociamos la funcion definida como manejador
+
+sig_action.sa_handler = sig_handler;
+
+//inicializar un conjunto con todas las señales
+
+sigfillset(&sig_action.sa_mask);
+
+sig_action.sa_flags = 0;
+
+for (int i = 1; i < SIGNAL_SIZE - 1; i++) {
+
+if (sigaction(i, &sig_action, NULL) < 0) {
+
+perror("Error al intentar establecer el manejador de señal\n");
+
+exit(-1);
+
+}
+
+}
+
+//Dejamos en ejecución un bucle infinito, asi el programa no
+termina
+
+while(true);
+
+}
+
+Mi solución a la ejercicio 3 ha sido:
+
+/*
+
+* Sistemas Operativos
+
+* Grado en Ingeniería Informática
+
+*
+
+* 2013 © Copyleft - All Wrongs Reserved
+
+*
+
+* Ernesto Serrano <erseco@correo.ugr.es>
+
+*
+
+* Escribe un programa que suspenda la ejecución del proceso
+actual hasta que
+
+* se reciba la señal SIGUSR1.
+
+*/
+
+#include <stdio.h>
+
+#include <signal.h>
+
+#include <unistd.h>
+
+#include <stdlib.h>
+
+int main(int argc, char *argv[]) {
+
+//definimos una nueva mascara
+
+sigset_t new_mask;
+
+//inicializar un conjunto con todas las señales
+
+sigfillset(&new_mask);
+
+//eliminamos la señal SIGUSR1
+
+sigdelset(&new_mask, SIGUSR1);
+
+//esperar solamente a la señal SIGUSR1
+
+sigsuspend(&new_mask);
+
+//fin del programa
+
+return 0;
+
+}
+
+Mi solución a la ejercicio 4 ha sido:
+
+Crea un manejador de señales, inicializa todas las señales del
+manejador a 0, luego crea un conjunto de mascaras vacia a la
+que agrega SIGTERM, luego bloqueamos la señal, hacemos una
+pausa (sleep) de 10, restauramos la señal y esperamos recibir
+las señales que estaban en espera en el manejador cambiando el
+valor de signal_recibida a 1
+
