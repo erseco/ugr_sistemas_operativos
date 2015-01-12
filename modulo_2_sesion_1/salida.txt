@@ -1,7 +1,0 @@
-El número de bloques es 3
-Bloque 1
-Esto es una prueba de texto para el segundo ejercicio de la practica uno del tem
-Bloque 2
-a dos de sistemas operativos de segundo de grado en ingenieria informatica cursa
-Bloque 3
-do en la etsiit de granada
